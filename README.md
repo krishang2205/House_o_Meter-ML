@@ -43,7 +43,7 @@
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/House_O_Meter.git
+   git clone https://github.com/krishang2205/House_o_Meter-ML.git
    cd House_O_Meter
    ```
 
