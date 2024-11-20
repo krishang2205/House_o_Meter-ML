@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>House Price Predictor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            margin: 0;
+            padding: 0;
+            color: #333;
+            transition: background 0.5s ease-in-out;
+        }
+
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .card {
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transition: box-shadow 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .card-header {
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #0072ff;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .card-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0072ff;
+        }
+
+        .quote {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #143ed4;
+            text-align: center;
+            margin-top: 20px;
+            font-style: italic;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #0072ff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 114, 255, 0.25);
+        }
+
+        .btn-primary {
+            background-color: #0072ff;
+            border-color: #0072ff;
+            border-radius: 10px;
+        }
+
+        .btn-primary:hover {
+            background-color: #005bb5;
+            border-color: #005bb5;
+        }
+
+        .loading-spinner {
+            display: none;
+            margin: 10px 0;
+        }
+
+        .prediction-text {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #28a745;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .fun-prompt {
+    font-size: 1.2rem;
+    color: #1132d5;
+    text-align: center;
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+.fun-prompt:hover {
+}
+
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .prediction-text {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand">House-o-Meter: Bangalore Edition</a>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card p-4">
+                    <div class="card-header">
+                      <h2>Welcome to <span class="bangalore-edition">House-o-Meter</span><br><small>Bangalore Edition</small></h2>
+                    </div>
+                    <div class="fun-prompt">
+                      
+                      <p>🔍 Ready to find your dream home? 🏠<br>Enter your details below and let the magic happen!</p>
+
+                    </div>
+                    <div class="card-body">
+                        <form method="post" onsubmit="send_data(event)">
+                            <div class="row">
+
+                                <!-- Location Selection -->
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="location" class="form-label"><b>Select Location</b></label>
+                                    <select class="form-select" id="location" name="location" required>
+                                        {% for location in locations %}
+                                            <option value="{{ location }}">{{ location }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <!-- BHK Input -->
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="bhk" class="form-label"><b>Enter BHK</b></label>
+                                    <input type="number" class="form-control" id="bhk" name="bhk" placeholder="Enter no. of BHK" required>
+                                </div>
+
+                                <!-- Bathroom Input -->
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="bathroom" class="form-label"><b>Enter Bathrooms</b></label>
+                                    <input type="number" class="form-control" id="bathroom" name="bathroom" placeholder="Enter no. of Bathrooms" required>
+                                </div>
+
+                                <!-- Square Feet Input -->
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="sqft" class="form-label"><b>Enter Square Feet</b></label>
+                                    <input type="number" class="form-control" id="sqft" name="sqft" placeholder="Enter square feet" required>
+                                </div>
+
+                                <!-- Area Type Selection -->
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="area_type" class="form-label"><b>Select Area Type</b></label>
+                                    <select class="form-select" id="area_type" name="area_type" required>
+                                        {% for area_type in area_types %}
+                                            <option value="{{ area_type }}">{{ area_type }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <!-- Balcony Input -->
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="balcony" class="form-label"><b>Enter Balconies</b></label>
+                                    <input type="number" class="form-control" id="balcony" name="balcony" placeholder="Enter no. of balconies" required>
+                                </div>
+
+                                <!-- Predict Button -->
+                                <div class="col-md-12 mt-4">
+                                    <button type="submit" class="btn btn-primary form-control">Predict Price</button>
+                                    <div class="loading-spinner mt-2 text-center">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Prediction Result -->
+                        <div class="col-md-12 text-center mt-4">
+                            <h3 class="prediction-text" id="prediction"></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function send_data(event) {
+            event.preventDefault(); // Prevent the form from submitting the traditional way
+            document.querySelector('.loading-spinner').style.display = 'block';
+            document.getElementById("prediction").innerHTML = "";
+            document.getElementById("prediction").style.opacity = 0;
+
+            var fd = new FormData(document.querySelector('form'));
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/predict', true);
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    document.querySelector('.loading-spinner').style.display = 'none';
+                    const predictionElement = document.getElementById('prediction');
+                    predictionElement.innerHTML = "Prediction: ₹ " + xhr.responseText;
+                    predictionElement.style.opacity = '1'; // Fade-in effect
+                }
+            };
+
+            xhr.send(fd);
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+
+</html>
